@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 
-
-from lib.ConwaysGrid import *
-from lib.ConwaysCanvas import *
+from lib.ui import *
+from lib.core import *
 from lib.ConwaysApp import *

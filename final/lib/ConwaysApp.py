@@ -12,19 +12,19 @@ class ConwaysApp(QMainWindow):
     """docstring for ConwaysApp."""
     def __init__(self, gridwidth=10, gridheight=10, parent=None):
         super(ConwaysApp, self).__init__()
-        self.title           = "Conway's Game of Life"
-        self.gridwidth       = gridwidth
-        self.gridheight      = gridheight
-        self.cellsize        = 25
-        self.margin_left     = 200
-        self.margin_top      = 200
-        self.width           = self.gridwidth*self.cellsize
-        self.height          = self.gridheight*self.cellsize
-        self.timer_period    = 125
-        self.timer_state     = False
+        self.title        = "Conway's Game of Life"
+        self.gridwidth    = gridwidth
+        self.gridheight   = gridheight
+        self.cellsize     = 25
+        self.margin_left  = 200
+        self.margin_top   = 200
+        self.width        = self.gridwidth*self.cellsize
+        self.height       = self.gridheight*self.cellsize-4
+        self.timer_period = 125
+        self.timer_state  = False
 
         self._initUI()
-
+        self._initMenus()
         self.timer  = QTimer()
         self.timer.timeout.connect(self.conway_canvas.updateGridEvent)
 
@@ -32,27 +32,74 @@ class ConwaysApp(QMainWindow):
         self.setWindowTitle(self.title + " - [PAUSED]")
         self.setWindowIcon(QIcon('lib/ico.png'))
         self.setGeometry(self.margin_left, self.margin_top, self.width, self.height)
-        #self.setFixedSize(self.size())
+        self.setFixedSize(self.size())
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.conway_canvas = ConwaysCanvas(self.cellsize, self.gridwidth, self.gridheight)
         self.setCentralWidget(self.conway_canvas)
         self.show()
 
+    def _initMenus(self):
+        mainMenu      = self.menuBar()
+        appMenu       = mainMenu.addMenu('Conway')
+        fileMenu      = mainMenu.addMenu('File')
+        settingsMenu  = mainMenu.addMenu('Settings')
+        helpMenu      = mainMenu.addMenu('Help')
+
+        #appMenu buttons
+        exitButton = QAction('Exit', self)
+        exitButton.setShortcut('Ctrl + Q')
+        exitButton.setStatusTip('Exit application')
+        exitButton.triggered.connect(self.close)
+        appMenu.addAction(exitButton)
+
+        #fileMenu buttons
+        openFileButton = QAction('Open File', self)
+        openFileButton.setShortcut('Ctrl + O')
+        openFileButton.triggered.connect(self.start_OpenFileWindow)
+        fileMenu.addAction(openFileButton)
+
+        #settingsMenu buttons
+        viewButton = QAction('Settings', self)
+        viewButton.triggered.connect(self.close)
+        settingsMenu.addAction(exitButton)
+
+        #helpMenu buttons
+        aboutButton = QAction('About', self)
+        aboutButton.triggered.connect(self.start_AboutWindow)
+        helpMenu.addAction(aboutButton)
+        helpMenu.addSeparator()
+        debugButton = QAction('Debug', self)
+        debugButton.triggered.connect(self.start_DebugWindow)
+        helpMenu.addAction(debugButton)
+
+    def start_AboutWindow(self):
+        pass
+        #self.wAboutWindow = AboutWindow(self)
+        #self.wAboutWindow.show()
+
+    def start_DebugWindow(self):
+        pass
+        #self.wDebugWindow = DebugWindow(self)
+        #self.wDebugWindow.show()
+
+    def start_OpenFileWindow(self):
+        pass
+        #self.wOpenFileWindow = OpenFileWindow(self)
+        #self.wOpenFileWindow.show()
+
     def _updateUI(self):
         self.timer.stop()
+        self.timer_state = False
         self.width  = self.gridwidth*self.cellsize
-        self.height = self.gridheight*self.cellsize
+        self.height = self.gridheight*self.cellsize-4
         self.setGeometry(self.margin_left, self.margin_top, self.width, self.height)
-        #self.setFixedSize(self.size())
+        self.setFixedSize(self.size())
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.conway_canvas  = ConwaysCanvas(self.cellsize, self.gridwidth, self.gridheight)
         self.setCentralWidget(self.conway_canvas)
-        self.timer_state    = False
         self.timer          = QTimer()
         self.timer.timeout.connect(self.conway_canvas.updateGridEvent)
         self.show()
-
-
 
     def keyPressEvent(self, event):
         if   event.key() == Qt.Key_Space:
@@ -70,16 +117,6 @@ class ConwaysApp(QMainWindow):
             self.conway_canvas.regen()
         elif event.key() == Qt.Key_C:
             self.conway_canvas.cleargrid()
-        elif event.key() == Qt.Key_Down:
-            self.set_gridheight(max(min(self.get_gridheight()+1, 50), 5))
-            print(self.get_gridheight())
-        elif event.key() == Qt.Key_Up:
-            self.set_gridheight(max(min(self.get_gridheight()-1, 50), 5))
-            print(self.get_gridheight())
-        elif event.key() == Qt.Key_Right:
-            self.set_gridwidth(max(min(self.get_gridwidth()+1, 50), 5))
-        elif event.key() == Qt.Key_Left:
-            self.set_gridwidth(max(min(self.get_gridwidth()-1, 50), 5))
 
 
     # *----------------------------GET--SET------------------------------------*
