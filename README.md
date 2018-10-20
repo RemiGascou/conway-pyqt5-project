@@ -1,1 +1,1 @@
-# conway-pyqt5-project
+# Conway's Game of Life
